@@ -33,27 +33,30 @@ void recordingTheCordinates(std::ifstream& loadedStream, std::string& line) {
 
 		if (theTopLine == 10 || theTopLine == 20 || theTopLine == 42) {	//The upper line signalise (10 = X cordinate, 20 = Y, 42 = buldge)
 			std::getline(loadedStream, line); //reading the next line
-			i++;
+			
 
-			if (theTopLine == 10 && (i % 2 == 1)) {		//checking if it's the first one or second point cordinates
+			if (theTopLine == 10 && (i % 2 == 0)) {		//checking if it's the first one or second point cordinates
 				firstX = std::stold(line);
 				std::cout << "\nThe first cordinate X is     " << firstX << std::endl;
+				i++;
 			}
-			else if(theTopLine == 10 && (i % 2 == 0)) {
+			else if(theTopLine == 10 && (i % 2 == 1)) {
 				secondX = std::stold(line);
 				std::cout << "\nThe second cordinate X is     " << secondX << std::endl;
+				i++;
 			}
-			else if (theTopLine == 20 && (i % 2 == 0)) {	//every cordinate has 2 points, this is why the logic is inverted with i
+			else if (theTopLine == 20 && (i % 2 == 1)) {	//every cordinate has 2 points, this is why the logic is inverted with i integer
 				firstY = std::stold(line);
 				std::cout << "\nThe first cordinate Y is     " << firstY << std::endl;
 			}
-			else if (theTopLine == 20 && (i % 2 == 1)) {
+			else if (theTopLine == 20 && (i % 2 == 0)) {
 				secondY = std::stold(line);
 				std::cout << "\nThe second cordinate Y is     " << secondY << std::endl;
 			}
 			else {
 				buldge = std::stold(line);
 				std::cout << "\nThe Buldge is      " << buldge << std::endl;
+				
 			}
 		}
 
@@ -115,7 +118,7 @@ int main()
 
 	std::string nameOfFile("");
 	std::getline(std::cin, nameOfFile);
-
+	
 	
 
 	if (nameOfFile != "Help" && nameOfFile != "HELP" && nameOfFile != "help") {
