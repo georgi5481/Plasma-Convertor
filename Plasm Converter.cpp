@@ -126,6 +126,7 @@ int main()
 
 		readingTheDXF(nameOfFile);	//calling the function for reading the file 
 
+		writingTheCNC(nameOfFile);
 	}
 	else {
 
