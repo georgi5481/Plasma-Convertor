@@ -3,11 +3,11 @@
 #include<string>
 #include<ctype.h>
 #include<vector>
+#include<set>
 #include "Cordinates Class.h"
 
 
 std::vector<Coordinates> polylineStorage;
-
 
 
 bool checkForChars(std::string& line) {		//check the word if there is some unwanted char
@@ -32,7 +32,7 @@ void recordingTheCordinates(std::ifstream& loadedStream, std::string& line) {
 		long double theTopLine = std::stold(line);
 
 		if (theTopLine == 10 || theTopLine == 20 || theTopLine == 42) {	//The upper line signalise (10 = X cordinate, 20 = Y, 42 = buldge)
-			std::getline(loadedStream, line); //reading the next line
+			std::getline(loadedStream, line); //reading the next line to store the number
 			
 
 			if (theTopLine == 10 && (i % 2 == 0)) {		//checking if it's the first one or second point cordinates
