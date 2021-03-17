@@ -22,7 +22,7 @@ public:
 
 	long double getFirstX() { return firstPointX; }
 	long double getFirstY() { return firstPointY; }
-	long double getBulge() { return bulge; };
+	long double getBulge() { return bulge; }
 	long double getSecondX() { return secondPointX; }
 	long double getSecondY() { return secondPointY; }
 
