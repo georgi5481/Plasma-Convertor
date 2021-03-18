@@ -1,10 +1,11 @@
-#include <iostream>
 #include<fstream>
 #include<string>
 #include<ctype.h>
 #include<vector>
 #include<set>
+#include<iostream>
 #include "Cordinates Class.h"
+#include "output logic.cpp"
 
 
 std::vector<Coordinates> polylineStorage;
@@ -94,7 +95,7 @@ void readingTheDXF(std::string& nameOfFile) {
 		std::string line("");
 		while (std::getline(loadedStream, line))	//reading every line and putting it into the helping string
 		{
-			if (line == "AcDbPolyline") {	//when we catch up to the cordinates/place we want to work
+			if (line == "AcDbPolyline" ) {	//when we catch up to the cordinates/place we want to work
 
 				recordingTheCordinates(loadedStream, line);
 			}
@@ -109,7 +110,47 @@ void readingTheDXF(std::string& nameOfFile) {
 	}
 }
 
+void writingTheCNC(std::string& nameOfFile, int plasmaSpeed) {
 
+	std::string thePath = "./CNC/" + nameOfFile + ".CNC";
+
+	std::ofstream outputStream(thePath);
+	outputStream << "\nN0G92X0Y0\nG91F" << plasmaSpeed;
+	
+	for (std::vector<Coordinates>::iterator i = polylineStorage.begin(); i != polylineStorage.end(); i++) {
+
+
+		if (i == polylineStorage.begin()) {
+			outputStream << "\nG00X" << i->getFirstX() << "Y" << i->getFirstY() << "\n/P86M98\n";
+
+		}
+		else if (i->getBulge() != 0 ) {
+			std::pair<long double, long double> theCenter = i->getCenter();
+			long double y = i->getFirstX() - i->getSecondX();
+
+			outputStream << "\nG03X" << turnIntoFourDigits(y) << "Y" << (i->getFirstY() - i->getSecondY()) <<
+				"I" << theCenter.first - i->getFirstX() << "J" << theCenter.second - i->getFirstY() << std::endl;
+		}
+
+		
+
+	}
+	
+	
+	
+	//	/ P86M98
+	//	G03X0Y - 6000I4566J - 3000
+	//	X - 49Y0I0J6000
+	//	/ P95M98
+	//	G00X - 30621Y - 27277
+	//	/ P86M98
+	//	G03X29437Y0I14718J - 8501
+	//	/ P95M98
+	//	M02
+
+
+	outputStream.close();
+}
 
 int main()
 {
@@ -118,6 +159,20 @@ int main()
 
 	std::string nameOfFile("");
 	std::getline(std::cin, nameOfFile);
+
+	printf("Now please enter the desired working speed (default = 1000): ");
+	std::string speedForPlasma("");
+	std::getline(std::cin, speedForPlasma);
+	int theSpeed(0);
+	if (speedForPlasma == "") {
+		theSpeed = 1000;
+	}
+	else if (checkForChars(speedForPlasma)) {
+		theSpeed = stoi(speedForPlasma);
+	}
+	else {
+		std::cout << "There has been an error with putting the speed, please retart the program.\n";
+	}
 	
 	
 
@@ -126,7 +181,7 @@ int main()
 
 		readingTheDXF(nameOfFile);	//calling the function for reading the file 
 
-		writingTheCNC(nameOfFile);
+		writingTheCNC(nameOfFile, theSpeed);
 	}
 	else {
 

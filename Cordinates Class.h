@@ -1,6 +1,7 @@
 #ifndef CORDINATES_DECLARATION
 #define CORDINATES_DECLARATION
 
+
 class Coordinates {
 private:
 	long double firstPointX;
@@ -51,14 +52,23 @@ public:
 			long double centerY = ((-directionX) * distanceBetweenPoints) + ((firstPointY + secondPointY) / 2);
 			
 			std::pair<long double, long double> bothCenters(centerX, centerY);
-			return bothCenters;
+			return bothCenters;		
 		}
 		else {
 			std::cout << "\nThere has been an error with calculating the center point of the arc.\n";
+			std::pair<long double, long double> bothCenters(0, 0);
+			return bothCenters;
 		}
 
 	}
 
-};
+	friend int turnIntoFourDigits(long double theDouble) {	};
 
+};
+int turnIntoFourDigits(long double theDouble) {
+	// stored as 54.999999...
+	theDouble = theDouble * 1000; // x is now 55499.999...
+	int y = (int)theDouble; // truncated to 55499
+	return y;
+};
 #endif // !CORDINATES_DECLARATION
