@@ -26,7 +26,7 @@ public:
 		firstPointX(firstX), firstPointY(firstY), bulge(incomingBulge), secondPointX(secondX), secondPointY(secondY),
 		centerCircleX(0), centerCircleY(0)
 	{	
-		distanceBetweenPoints = sqrt(pow((secondPointX - firstPointX), 2) + pow((secondPointY - firstPointY), 2));
+		distanceBetweenPoints = sqrt(pow((this->secondPointX - this->firstPointX), 2) + pow((this->secondPointY - this->firstPointY), 2));
 		//calculating the distance
 		std::cout << "\n the distance is : " << distanceBetweenPoints;
 	}
@@ -45,11 +45,11 @@ public:
 			long double saditta = (distanceBetweenPoints / 2);		//calculating the lengths
 			long double radius = (saditta * (pow(this->bulge, 2) + 1)) / (2 * this->bulge);
 
-			long double directionX = ((secondPointX - firstPointX)) / distanceBetweenPoints;
+			long double directionX = ((secondPointX - firstPointX) / distanceBetweenPoints);
 			long double directionY = ((secondPointY - firstPointY) / distanceBetweenPoints);
 
 			long double centerX = (directionY * distanceBetweenPoints) + ((firstPointX + secondPointX) / 2);
-			long double centerY = ((-directionX) * distanceBetweenPoints) + ((firstPointY + secondPointY) / 2);
+			long double centerY = ((directionX) * distanceBetweenPoints) + ((firstPointY + secondPointY) / 2);
 			
 			std::pair<long double, long double> bothCenters(centerX, centerY);
 			return bothCenters;		
@@ -62,7 +62,7 @@ public:
 
 	}
 
-	friend int turnIntoFourDigits(long double theDouble) {	};
+	friend int turnIntoFourDigits(long double&);
 
 };
 int turnIntoFourDigits(long double theDouble) {
@@ -70,5 +70,5 @@ int turnIntoFourDigits(long double theDouble) {
 	theDouble = theDouble * 1000; // x is now 55499.999...
 	int y = (int)theDouble; // truncated to 55499
 	return y;
-};
+}
 #endif // !CORDINATES_DECLARATION

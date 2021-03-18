@@ -5,7 +5,6 @@
 #include<set>
 #include<iostream>
 #include "Cordinates Class.h"
-#include "output logic.cpp"
 
 
 std::vector<Coordinates> polylineStorage;
@@ -121,15 +120,18 @@ void writingTheCNC(std::string& nameOfFile, int plasmaSpeed) {
 
 
 		if (i == polylineStorage.begin()) {
-			outputStream << "\nG00X" << i->getFirstX() << "Y" << i->getFirstY() << "\n/P86M98\n";
+			outputStream << "\nG00X" << turnIntoFourDigits(i->getFirstX()) << "Y" << turnIntoFourDigits(i->getFirstY()) << "\n/P86M98\n";
 
 		}
-		else if (i->getBulge() != 0 ) {
+		 if (i->getBulge() != 0 ) {
 			std::pair<long double, long double> theCenter = i->getCenter();
-			long double y = i->getFirstX() - i->getSecondX();
-
-			outputStream << "\nG03X" << turnIntoFourDigits(y) << "Y" << (i->getFirstY() - i->getSecondY()) <<
-				"I" << theCenter.first - i->getFirstX() << "J" << theCenter.second - i->getFirstY() << std::endl;
+			long double x = i->getSecondX() - i->getFirstX();
+			long double y = i->getSecondY() - i->getFirstY();
+			if (i != polylineStorage.begin() && (i - 1)->getSecondX() == i->getFirstX() && (i - 1)->getSecondY() == i->getFirstY()) {
+				outputStream << "G03";
+			}
+			outputStream << "X" << turnIntoFourDigits(x) << "Y" << turnIntoFourDigits(y) <<
+				"I" << turnIntoFourDigits(i->getSecondX() - theCenter.first) << "J" << turnIntoFourDigits(i->getSecondY() - theCenter.second) << std::endl;
 		}
 
 		
