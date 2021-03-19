@@ -116,40 +116,43 @@ void writingTheCNC(std::string& nameOfFile, int plasmaSpeed) {
 	std::ofstream outputStream(thePath);
 	outputStream << "\nN0G92X0Y0\nG91F" << plasmaSpeed;
 	
-	for (std::vector<Coordinates>::iterator i = polylineStorage.begin(); i != polylineStorage.end(); i++) {
+	for (std::vector<Coordinates>::iterator i = polylineStorage.begin(); i != polylineStorage.end() && !polylineStorage.empty(); i++) {
 
 
 		if (i == polylineStorage.begin()) {
 			outputStream << "\nG00X" << turnIntoFourDigits(i->getFirstX()) << "Y" << turnIntoFourDigits(i->getFirstY()) << "\n/P86M98\n";
 
 		}
-		 if (i->getBulge() != 0 ) {
+		if (i->getBulge() != 0) {
 			std::pair<long double, long double> theCenter = i->getCenter();
 			long double x = i->getSecondX() - i->getFirstX();
 			long double y = i->getSecondY() - i->getFirstY();
-			if (i != polylineStorage.begin() && (i - 1)->getSecondX() == i->getFirstX() && (i - 1)->getSecondY() == i->getFirstY()) {
+
+			if (i == polylineStorage.begin()) {	//compiller crashes if you use 1 if statement, cuz it can't itterate i-1
 				outputStream << "G03";
 			}
-			outputStream << "X" << turnIntoFourDigits(x) << "Y" << turnIntoFourDigits(y) <<
-				"I" << turnIntoFourDigits(i->getSecondX() - theCenter.first) << "J" << turnIntoFourDigits(i->getSecondY() - theCenter.second) << std::endl;
+			else if ((i - 1)->getSecondX() != i->getFirstX() && (i - 1)->getSecondY() != i->getFirstY()) {	//If the new line doesn't start at the end of the last one
+
+				outputStream << "G03";
+
+			}
+				outputStream << "X" << turnIntoFourDigits(x) << "Y" << turnIntoFourDigits(y) <<	//find the solution to the center
+					"I" << turnIntoFourDigits(i->getFirstX() - theCenter.first) << "J" << turnIntoFourDigits(theCenter.second - i->getFirstY()) << std::endl;
+			
 		}
 
-		
 
+
+		//	/ P86M98
+		//	G03X0Y - 6000I4566J - 3000
+		//	X - 49Y0I0J6000
+		//	/ P95M98
+		//	G00X - 30621Y - 27277
+		//	/ P86M98
+		//	G03X29437Y0I14718J - 8501
+		//	/ P95M98
+		//	M02
 	}
-	
-	
-	
-	//	/ P86M98
-	//	G03X0Y - 6000I4566J - 3000
-	//	X - 49Y0I0J6000
-	//	/ P95M98
-	//	G00X - 30621Y - 27277
-	//	/ P86M98
-	//	G03X29437Y0I14718J - 8501
-	//	/ P95M98
-	//	M02
-
 
 	outputStream.close();
 }

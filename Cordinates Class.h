@@ -4,7 +4,7 @@
 
 class Coordinates {
 private:
-	long double firstPointX;
+	long double firstPointX;		//using long double so that the positioning is more accurate 
 	long double firstPointY;
 	long double bulge;
 
@@ -42,17 +42,21 @@ public:
 
 		if (this->bulge != 0) {
 
-			long double saditta = (distanceBetweenPoints / 2);		//calculating the lengths
-			long double radius = (saditta * (pow(this->bulge, 2) + 1)) / (2 * this->bulge);
+			long double saditta = this->bulge * distanceBetweenPoints / 2 ;		//calculating the lengths
+			long double radius = (pow(saditta, 2) + pow(distanceBetweenPoints, 2)) / (2 * saditta);
+			long double saditta2 = ((distanceBetweenPoints / 2) * (1 - pow(bulge, 2)) / (2 * bulge));
+			//	s * (1 - square(b)) / (2 * b)
 
-			long double directionX = ((secondPointX - firstPointX) / distanceBetweenPoints);
-			long double directionY = ((secondPointY - firstPointY) / distanceBetweenPoints);
+			long double mainAngle = 4 * atan(this->bulge);
 
-			long double centerX = (directionY * distanceBetweenPoints) + ((firstPointX + secondPointX) / 2);
-			long double centerY = ((directionX) * distanceBetweenPoints) + ((firstPointY + secondPointY) / 2);
+			long double directionX = ((this->secondPointX - this->firstPointX) / distanceBetweenPoints);
+			long double directionY = ((this->secondPointY - this->firstPointY) / distanceBetweenPoints);
+
+			long double centerX = (directionY * saditta2) + ((firstPointX + secondPointX) / 2);
+			long double centerY = ((-directionX) * saditta2) + ((firstPointY + secondPointY) / 2);
 			
 			std::pair<long double, long double> bothCenters(centerX, centerY);
-			return bothCenters;		
+			return bothCenters;		//returning both X and Y center of the arc center
 		}
 		else {
 			std::cout << "\nThere has been an error with calculating the center point of the arc.\n";
@@ -65,7 +69,7 @@ public:
 	friend int turnIntoFourDigits(long double&);
 
 };
-int turnIntoFourDigits(long double theDouble) {
+int turnIntoFourDigits(long double theDouble) {//not using reference on purpose
 	// stored as 54.999999...
 	theDouble = theDouble * 1000; // x is now 55499.999...
 	int y = (int)theDouble; // truncated to 55499
