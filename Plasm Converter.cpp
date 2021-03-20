@@ -118,41 +118,52 @@ void writingTheCNC(std::string& nameOfFile, int plasmaSpeed) {
 	
 	for (std::vector<Coordinates>::iterator i = polylineStorage.begin(); i != polylineStorage.end() && !polylineStorage.empty(); i++) {
 
+		long double x = i->getSecondX() - i->getFirstX(); //helping for simpler code down
+		long double y = i->getSecondY() - i->getFirstY();
 
 		if (i == polylineStorage.begin()) {
 			outputStream << "\nG00X" << turnIntoFourDigits(i->getFirstX()) << "Y" << turnIntoFourDigits(i->getFirstY()) << "\n/P86M98\n";
+			
 
 		}
-		if (i->getBulge() != 0) {
+		if (i->getBulge() != 0) {	//writes the logic for 3 pointed arc
+
 			std::pair<long double, long double> theCenter = i->getCenter();
-			long double x = i->getSecondX() - i->getFirstX();
-			long double y = i->getSecondY() - i->getFirstY();
+			
 
-			if (i == polylineStorage.begin()) {	//compiller crashes if you use 1 if statement, cuz it can't itterate i-1
+			/*if (i == polylineStorage.begin()) {	//compiller crashes if you use 1 if statement, cuz it can't itterate i-1
 				outputStream << "G03";
 			}
-			else if ((i - 1)->getSecondX() != i->getFirstX() && (i - 1)->getSecondY() != i->getFirstY()) {	//If the new line doesn't start at the end of the last one
+			else*/ if (i == polylineStorage.begin() || ((i - 1)->getSecondX() != i->getFirstX() && (i - 1)->getSecondY() != i->getFirstY())) {	//If the new line doesn't start at the end of the last one
 
 				outputStream << "G03";
 
 			}
-				outputStream << "X" << turnIntoFourDigits(x) << "Y" << turnIntoFourDigits(y) <<	//find the solution to the center
+				outputStream << "X" << turnIntoFourDigits(x) << "Y" << turnIntoFourDigits(y) <<		//writes the G-code for the arc part
 					"I" << turnIntoFourDigits(theCenter.first - i->getFirstX() ) << "J" << turnIntoFourDigits(theCenter.second - i->getFirstY()) << std::endl;
 			
 		}
+		else {		//	polylines
+				if (i != polylineStorage.begin() &&		
+					((i - 1)->getSecondX() != i->getFirstX() && (i - 1)->getSecondY() != i->getFirstY())) {
+				outputStream << "/P95M98\nG00X" << turnIntoFourDigits(x) << "Y" << turnIntoFourDigits(y) << "\n/P86M98\nG01";
+				}
+				else {
 
+					if (i == polylineStorage.begin() || ((i - 1)->getSecondX() == i->getFirstX() &&
+						(i - 1)->getSecondY() == i->getFirstY())) {						//If the line is the first one, or starts from the end of the previous polyline
 
+						outputStream << "G01";
 
-		//	/ P86M98
-		//	G03X0Y - 6000I4566J - 3000
-		//	X - 49Y0I0J6000
-		//	/ P95M98
-		//	G00X - 30621Y - 27277
-		//	/ P86M98
-		//	G03X29437Y0I14718J - 8501
-		//	/ P95M98
-		//	M02
+					}
+					outputStream << "X" << turnIntoFourDigits(x) << "Y" << turnIntoFourDigits(y) << std::endl;
+				}
+
+		}
+
 	}
+
+	outputStream << "\n/P95M98 " << std::endl << "M02" << std::endl << std::endl;	//writing at the end  to stop the plasma
 
 	outputStream.close();
 }
