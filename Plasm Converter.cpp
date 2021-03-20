@@ -137,7 +137,7 @@ void writingTheCNC(std::string& nameOfFile, int plasmaSpeed) {
 
 			}
 				outputStream << "X" << turnIntoFourDigits(x) << "Y" << turnIntoFourDigits(y) <<	//find the solution to the center
-					"I" << turnIntoFourDigits(i->getFirstX() - theCenter.first) << "J" << turnIntoFourDigits(theCenter.second - i->getFirstY()) << std::endl;
+					"I" << turnIntoFourDigits(theCenter.first - i->getFirstX() ) << "J" << turnIntoFourDigits(theCenter.second - i->getFirstY()) << std::endl;
 			
 		}
 
