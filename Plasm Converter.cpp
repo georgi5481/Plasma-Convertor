@@ -4,6 +4,7 @@
 #include<vector>
 #include<set>
 #include<iostream>
+#include<algorithm>
 #include<limits>
 #include "Cordinates Class.h"
 
@@ -108,6 +109,7 @@ void readingTheDXF(std::string& nameOfFile) {
 	else {
 		std::cout << "There has been a problem with loading the file. Please restart the coonvertor." << std::endl
 			<< "If this doesn't help, see if there is a problem in the file itself.";
+	
 	}
 }
 
@@ -172,6 +174,12 @@ void writingTheCNC(std::string& nameOfFile, int plasmaSpeed) {
 	outputStream.close();
 }
 
+std::string toLowerCharacters(std::string nameOfFile) {	//not using a reference on purpose
+	std::transform(nameOfFile.begin(), nameOfFile.end(), nameOfFile.begin(),
+		[](unsigned char c) { return std::tolower(c); });
+	return nameOfFile;
+}
+
 
 int main()
 {
@@ -181,36 +189,38 @@ int main()
 	std::string nameOfFile("");
 	std::getline(std::cin, nameOfFile);
 
-	printf("Now please enter the desired working speed (default = 1000): ");
-	std::string speedForPlasma("");
-	std::getline(std::cin, speedForPlasma);
-	int theSpeed(0);
+	if (toLowerCharacters(nameOfFile) == "help") {
 
-	if (speedForPlasma == "") {
-		theSpeed = 1000;
-	}
-	else if (checkForChars(speedForPlasma)) {
-		theSpeed = stoi(speedForPlasma);
+		std::cout << "\n   Created by Georgi Todorov (github.com/georgi5481). Feel free to use or modify it.\n\n" <<
+			"This program is reading the .DXF files created on AutoCad and using the polyline/lines and arcs\ncreated in it to write a G-code .\n" <<
+			"Basically it is a CNC program converter/creator for my plasma cutting machine.\n" <<
+			"The plasma itself reads the G-code and does the instructions given in the CNC file. \n" <<
+			"Please note that I have saved the DXF file into an older version: AutoCAD 2000/LT2000 DXF\n" <<
+			"So there might be problems with the logic of the program if you save the file in a newer version of an AutoCAD DXF file\n\n";
+		main();	//recurrsion
 	}
 	else {
-		std::cout << "There has been an error with putting the speed, please retart the program.\n";
-		return 0;
-	}
-	
-	
 
-	if (nameOfFile != "Help" && nameOfFile != "HELP" && nameOfFile != "help") {
-		//Checking if the user wants more information about the program
+		printf("Now please enter the desired working speed (default = 1000): ");
+		std::string speedForPlasma("");
+		std::getline(std::cin, speedForPlasma);
+		int theSpeed(0);
+
+		if (speedForPlasma == "") {
+			theSpeed = 1000;
+		}
+		else if (checkForChars(speedForPlasma)) {
+			theSpeed = stoi(speedForPlasma);
+		}
+		else {
+			std::cout << "There has been an error with putting the speed, please retart the program.\n";
+			return 0;
+		}
 
 		readingTheDXF(nameOfFile);	//calling the function for reading the file 
 
-		writingTheCNC(nameOfFile, theSpeed);
-	}
-	else {
+		writingTheCNC(nameOfFile, theSpeed); //writing in the new file
 
-		std::cout << "the help section";
-	}
-   
 
+	}
 }
-
