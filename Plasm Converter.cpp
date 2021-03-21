@@ -76,7 +76,7 @@ void recordingTheCordinates(std::ifstream& loadedStream, std::string& line) {
 
 			i++;	//cuz we are skipping the first cordinates next time
 
-			std::cout << "\nworks\n";
+			std::cout << "\n\nworks\n";
 
 		}
 
@@ -90,33 +90,39 @@ void readingTheDXF(std::string& nameOfFile) {
 
 
 	std::ifstream loadedStream;
-	loadedStream.open("./DXF/" + nameOfFile + ".dxf");
+	loadedStream.open("DXF/" + nameOfFile + ".dxf");
 
 	if (loadedStream.is_open()) { //Checks if the file was loaded successfully 
 
 		std::string line("");
 		while (std::getline(loadedStream, line))	//reading every line and putting it into the helping string
 		{
-			if (line == "AcDbPolyline" || line == "AcDbLine" ) {	//when we catch up to the cordinates/place we want to work
+			if (line == "AcDbPolyline" ) {	//when we catch up to the cordinates/place we want to work
 
 				recordingTheCordinates(loadedStream, line);
 			}
 
 		}
-		std::cout << "\n The conversion to .CNC file was successful. " << '\n';
 		loadedStream.close();
 	}
 	else {
-		std::cout << "There has been a problem with loading the file. Please restart the coonvertor." << std::endl
+		std::cout << "There has been a problem with loading the file. Please restart the convertor." << std::endl
 			<< "If this doesn't help, see if there is a problem in the file itself.";
-	
+	}
+
+	if (polylineStorage.empty()) {
+		std::cout << "\nThere is a problem. No polylines or arcs detected.\n";
+	}
+	else {
+
+		std::cout << "\n The conversion to .CNC file was successful. " << '\n';
 	}
 }
 
 
 void writingTheCNC(std::string& nameOfFile, int plasmaSpeed) {
 
-	std::string thePath = "./CNC/" + nameOfFile + ".CNC";
+	std::string thePath = "CNC/" + nameOfFile + ".CNC";
 
 	std::ofstream outputStream(thePath);
 	outputStream << "\nN0G92X0Y0\nG91F" << plasmaSpeed;
@@ -192,7 +198,8 @@ int main()
 	if (toLowerCharacters(nameOfFile) == "help") {
 
 		std::cout << "\n   Created by Georgi Todorov (github.com/georgi5481). Feel free to use or modify it.\n\n" <<
-			"This program is reading the .DXF files created on AutoCad and using the polyline/lines and arcs\ncreated in it to write a G-code .\n" <<
+			"This program is reading the .DXF files created on AutoCad and using the polyline/lines and arcs\n" <<
+			"created in it to write a G-code .\n" <<
 			"Basically it is a CNC program converter/creator for my plasma cutting machine.\n" <<
 			"The plasma itself reads the G-code and does the instructions given in the CNC file. \n" <<
 			"Please note that I have saved the DXF file into an older version: AutoCAD 2000/LT2000 DXF\n" <<
@@ -221,6 +228,8 @@ int main()
 
 		writingTheCNC(nameOfFile, theSpeed); //writing in the new file
 
-
 	}
+
+	std::cout << "\nPress enter to exit.\n";
+	std::getline(std::cin, nameOfFile);
 }
