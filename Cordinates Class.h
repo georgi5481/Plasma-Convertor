@@ -17,14 +17,14 @@ private:
 	long double centerCircleY;
 
 public:
-	Coordinates() :firstPointX(0), firstPointY(0), bulge(0), secondPointX(0), secondPointY(0), distanceBetweenPoints(0), centerCircleX(0),
-		centerCircleY(0) {
+	Coordinates() :firstPointX(LDBL_MIN), firstPointY(LDBL_MIN), bulge(LDBL_MIN), secondPointX(LDBL_MIN), secondPointY(LDBL_MIN), distanceBetweenPoints(LDBL_MIN), centerCircleX(LDBL_MIN),
+		centerCircleY(LDBL_MIN) {
 		std::cout << "\nThere has been an error. Please restart the program\n";
 	}//the default constructor won't/shouldn't be called
 
 	Coordinates(long double firstX, long double firstY, long double incomingBulge, long double secondX, long double secondY) :
 		firstPointX(firstX), firstPointY(firstY), bulge(incomingBulge), secondPointX(secondX), secondPointY(secondY),
-		centerCircleX(0), centerCircleY(0)
+		centerCircleX(LDBL_MIN), centerCircleY(LDBL_MIN)
 	{	
 		distanceBetweenPoints = sqrt(pow((this->secondPointX - this->firstPointX), 2) + pow((this->secondPointY - this->firstPointY), 2));
 		//calculating the distance
@@ -40,7 +40,7 @@ public:
 
 	std::pair<long double,long double> getCenter() {
 
-		if (this->bulge != 0) {
+		if (this->bulge != LDBL_MIN) {	//if there is an arc
 
 		//	long double saditta = this->bulge * distanceBetweenPoints / 2 ;		//some different formula
 			long double saditta = (((distanceBetweenPoints / 2) * (1 - pow(bulge, 2))) / (2 * bulge));
@@ -59,7 +59,7 @@ public:
 		}
 		else {
 			std::cout << "\nThere has been an error with calculating the center point of the arc.\n";
-			std::pair<long double, long double> bothCenters(0, 0);
+			std::pair<long double, long double> bothCenters(LDBL_MIN, LDBL_MIN);
 			return bothCenters;
 		}
 
