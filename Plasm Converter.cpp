@@ -132,28 +132,22 @@ void writingTheCNC(std::string& nameOfFile, int plasmaSpeed) {
 		long double x = i->getSecondX() - i->getFirstX(); //helping for simpler code down
 		long double y = i->getSecondY() - i->getFirstY();
 
-		if (i == polylineStorage.begin()) {
+		if (i == polylineStorage.begin()) {		//first one is always where the plasma should go at the beginning
 			outputStream << "\nG00X" << turnIntoFourDigits(i->getFirstX()) << "Y" << turnIntoFourDigits(i->getFirstY()) << "\n/P86M98\n";
-			
 
 		}
-		else if (((i - 1)->getSecondX() != i->getFirstX() && (i - 1)->getSecondY() != i->getFirstY())) {
-			outputStream << "/P95M98\nG00X" << turnIntoFourDigits(i->getFirstX() - (i - 1)->getSecondX()) << "Y" << turnIntoFourDigits(i->getFirstY() - (i - 1)->getSecondX()) << "\n/P86M98\n";
+		else if (((i - 1)->getSecondX() != i->getFirstX() && (i - 1)->getSecondY() != i->getFirstY())) {	//when the plasma should change posiotion
+			outputStream << "/P95M98\nG00X" << turnIntoFourDigits(i->getFirstX() - (i - 1)->getSecondX()) << "Y" <<
+				turnIntoFourDigits(i->getFirstY() - (i - 1)->getSecondY()) << "\n/P86M98\n";
 		}
-
-
 
 		
 		if (i->getBulge() != LDBL_MIN) {	//writes the logic for 3 pointed arc
 
 			std::pair<long double, long double> theCenter = i->getCenter();
 			
-
-			/*if (i == polylineStorage.begin()) {	//compiller crashes if you use 1 if statement, cuz it can't itterate i-1
-				outputStream << "G03";
-			}
-			else*/ if (i == polylineStorage.begin() || ((i - 1)->getSecondX() != i->getFirstX() &&
-						(i - 1)->getSecondY() != i->getFirstY()) || (i- 1)->getBulge() == LDBL_MIN) {				//If the new line doesn't start at the end of the last one
+			if (i == polylineStorage.begin() || ((i - 1)->getSecondX() != i->getFirstX() &&
+						(i - 1)->getSecondY() != i->getFirstY()) || (i- 1)->getBulge() == LDBL_MIN) {		//If the new line doesn't start at the end of the last one
 
 				outputStream << "G03";
 
@@ -182,7 +176,7 @@ void writingTheCNC(std::string& nameOfFile, int plasmaSpeed) {
 
 std::string toLowerCharacters(std::string nameOfFile) {	//not using a reference on purpose
 	std::transform(nameOfFile.begin(), nameOfFile.end(), nameOfFile.begin(),
-		[](unsigned char c) { return std::tolower(c); });
+		[](unsigned char c) { return std::tolower(c); });		//turns alpha characters into lower ones
 	return nameOfFile;
 }
 
